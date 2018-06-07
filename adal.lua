@@ -1,15 +1,14 @@
-local requests = require 'requests'
+local http = require 'resty.http'
 local cjson = require 'cjson'
 local base64 = require 'base64'
 local crypto = require 'crypto'
 local utils = require 'utils'
+local httpc = http.new()
 
 -- Module declaration
 local M 
 
 local function acquireTokenWithClientCertificate(authority, resource, clientId, certificate, thumbprint) 
-    
-
     local required = {
         authority = 'string',
         resource = 'string',
@@ -28,20 +27,24 @@ local function acquireTokenWithClientCertificate(authority, resource, clientId, 
         client_assertion = client_assertion,
         resource = resource
     }
-    response = requests.post{
-        url = authority,
-        headers = {
-            ["Content-Type"] = 'application/x-www-form-urlencoded'
-        },
-        data = utils.url_encode_table(token_req)
+
+    headers = {
+        ["Content-Type"] = 'application/x-www-form-urlencoded'
     }
+
+    response = httpc:request_uri(
+        authority, {
+            method = "POST",
+            headers = headers,
+            body = utils.url_encode_table(token_req)
+        }
+    )
+        
     local json = assert(cjson.decode(response.text))
     return json.access_token
 end
 
 local function acquireTokenWithClientSecret(authority, resource, clientId, secret) 
-    
-
     local required = {
         authority = 'string',
         resource = 'string',
@@ -49,6 +52,7 @@ local function acquireTokenWithClientSecret(authority, resource, clientId, secre
         certificate = 'string',
         thumbprint = 'string'
     }
+    
     -- TODO: check args
 
     local client_assertion = utils.create_assertion(authority, resource, clientId, certificate, thumbprint)
@@ -59,13 +63,19 @@ local function acquireTokenWithClientSecret(authority, resource, clientId, secre
         client_secret = secret,
         resource = resource
     }
-    response = requests.post{
-        url = authority,
-        headers = {
-            ["Content-Type"] = 'application/x-www-form-urlencoded'
-        },
-        data = utils.url_encode_table(token_req)
+
+    headers = {
+        ["Content-Type"] = 'application/x-www-form-urlencoded'
     }
+
+    response = httpc:request_uri(
+        authority, {
+            method = "POST",
+            headers = headers,
+            body = utils.url_encode_table(token_req)
+        }
+    )
+        
     local json = assert(cjson.decode(response.text))
     return json.access_token
 end

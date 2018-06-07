@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "adal-lua"
-version = "0.0.1-1"
+version = "0.0.2-1"
 -- LuaDist source
 source = {
-  tag = "0.0.1-1",
+  tag = "0.0.2-1",
   url = "git://github.com/LuaDist-testing/adal-lua.git"
 }
 -- Original source
 -- source = {
 --    url = "git://github.com/alexeldeib/adal-lua.git",
---    tag = "v0.0.1"
+--    tag = "v0.0.2"
 -- }
 description = {
    license = "MIT"
